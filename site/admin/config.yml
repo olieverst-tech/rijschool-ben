@@ -11,7 +11,7 @@ backend:
   repo: olieverst-tech/rijschool-ben
   branch: main
   # OAuth-proxy (decap-oauth-proxy). Zonder "/" aan het eind.
-  base_url: https://VUL-IN-PROXY-URL.vercel.app
+  base_url: https://decap-oauth-proxy-psi.vercel.app
   # Publieke repo: public_repo is genoeg (minder rechten dan "repo").
   auth_scope: public_repo
   commit_messages:
