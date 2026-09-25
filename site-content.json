@@ -142,11 +142,7 @@
       { "src": "images/lesauto-interieur.jpg", "alt": "PEUGEOT 3008" }
     ]
   },
-  "gallery": [
-    { "image": { "src": "images/lesauto-schuin.jpg", "alt": "PEUGEOT 3008" }, "caption": "" },
-    { "image": { "src": "images/lesauto-voorkant.jpg", "alt": "PEUGEOT 3008" }, "caption": "" },
-    { "image": { "src": "images/lesauto-interieur.jpg", "alt": "PEUGEOT 3008" }, "caption": "" }
-  ],
+  "gallery": [],
   "bennie": {
     "title": "BENNIE",
     "photo": {
