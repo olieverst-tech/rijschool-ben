@@ -1,0 +1,153 @@
+# Decap CMS voor Rijschool Ben. Zie CLAUDE.md, "CMS (Decap)".
+#
+# Bewerkt alleen site-content.json (het content-model van build-site.js).
+# Elke opslag = een commit op main = Vercel bouwt en publiceert de site.
+# Bewust NIET bewerkbaar: navigatie (navigation.json), kleuren/opmaak (CSS),
+# de rijdende auto, en alle velden in site-content.json die hieronder niet
+# staan. Decap laat die velden bij opslaan ongemoeid.
+
+backend:
+  name: github
+  repo: olieverst-tech/rijschool-ben
+  branch: main
+  # OAuth-proxy (decap-oauth-proxy). Zonder "/" aan het eind.
+  base_url: https://VUL-IN-PROXY-URL.vercel.app
+  # Publieke repo: public_repo is genoeg (minder rechten dan "repo").
+  auth_scope: public_repo
+  commit_messages:
+    update: "CMS: inhoud bijgewerkt ({{author-login}})"
+    uploadMedia: "CMS: foto toegevoegd: {{path}} ({{author-login}})"
+    deleteMedia: "CMS: foto verwijderd: {{path}} ({{author-login}})"
+
+# Alleen actief op localhost, met `npx decap-server` in de repo-root.
+local_backend: true
+
+locale: nl
+site_url: https://rijschool-ben.vercel.app
+display_url: https://rijschool-ben.vercel.app
+
+# Foto's komen naast de bestaande in site/images; in site-content.json staat
+# het pad vanaf site/ ("images/…"), zoals build-site.js verwacht.
+media_folder: site/images
+public_folder: images
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: website
+    label: Website
+    editor:
+      preview: false
+    files:
+      - name: homepage
+        label: Homepage
+        file: site-content.json
+        format: json
+        fields:
+          - label: Bovenaan (hero)
+            name: hero
+            widget: object
+            fields:
+              - label: Achtergrondfoto
+                name: backgroundPhoto
+                widget: object
+                hint: Vult het hele vlak achter de titel en wordt daarvoor bijgesneden. Gebruik een liggende foto van minstens 1600 px breed.
+                fields:
+                  - { label: Foto, name: src, widget: image, choose_url: false }
+              - label: Titel
+                name: title
+                widget: string
+                hint: Het woord vóór het logo-woord "BEN" (dat staat vast in de opmaak).
+              - { label: Ondertitel, name: lead, widget: string }
+              - { label: Subtekst, name: sub, widget: string }
+
+          - label: Pakketten & prijzen
+            name: packages
+            widget: object
+            fields:
+              - label: Pakketten
+                name: items
+                widget: list
+                allow_add: false
+                summary: "{{fields.title}}"
+                hint: Pakketten toevoegen kan hier niet (de nummering en onderregel staan vast); bestaande aanpassen wel.
+                fields:
+                  - label: Titel
+                    name: title
+                    widget: text
+                    hint: Een nieuwe regel (Enter) wordt ook op de site een nieuwe regel.
+                  - label: Prijs
+                    name: price
+                    widget: string
+                    required: false
+                    hint: Bv. "€ 1650,=". Leeg laten = geen prijs tonen.
+                  - label: Openingszin
+                    name: intro
+                    widget: text
+                  - label: Tekst
+                    name: paragraphs
+                    widget: list
+                    hint: Elke alinea apart. **woord** wordt vetgedrukt.
+                    field: { label: Alinea, name: paragraph, widget: text }
+
+          - label: Contactgegevens
+            name: contact
+            widget: object
+            fields:
+              - label: E-mailadres
+                name: email
+                widget: string
+                pattern: ['^[^@\s]+@[^@\s]+\.[a-z]{2,}$', "Geen geldig e-mailadres"]
+              - label: Telefoonnummer (zoals getoond)
+                name: phone
+                widget: string
+                hint: Bv. "06 43157777".
+              - label: Telefoonnummer voor de belknop
+                name: phoneLink
+                widget: string
+                hint: Hetzelfde nummer internationaal, zonder spaties. 06 43157777 wordt +31643157777.
+                pattern: ['^\+[1-9][0-9]{7,14}$', "Gebruik +31… zonder spaties of streepjes"]
+              - { label: Adresregel 1, name: addressLine1, widget: string }
+              - { label: Adresregel 2, name: addressLine2, widget: string }
+              - label: Link naar Google Maps
+                name: mapsUrl
+                widget: string
+                hint: Zoek het adres op in Google Maps, klik op Delen en plak de link hier.
+                pattern: ['^https://', "Moet met https:// beginnen"]
+              - label: Facebook-pagina
+                name: facebook
+                widget: string
+                required: false
+                hint: Volledige link. Leeg laten = geen Facebook-icoon.
+                pattern: ['^(https://.+)?$', "Moet met https:// beginnen"]
+              - label: Instagram-profiel
+                name: instagram
+                widget: string
+                required: false
+                hint: Volledige link. Leeg laten = geen Instagram-icoon.
+                pattern: ['^(https://.+)?$', "Moet met https:// beginnen"]
+
+          - label: Fotogalerij (onder Lesauto)
+            name: gallery
+            widget: list
+            required: false
+            label_singular: foto
+            summary: "{{fields.caption}}"
+            hint: Foto's worden nooit bijgesneden. Geen foto's = de galerij verdwijnt van de site.
+            fields:
+              - label: Foto
+                name: image
+                widget: object
+                fields:
+                  - { label: Bestand, name: src, widget: image, choose_url: false }
+                  - label: Beschrijving voor blinden/zoekmachines
+                    name: alt
+                    widget: string
+                    hint: Kort, wat staat er op de foto? Bv. "Lesauto van voren".
+              - label: Bijschrift
+                name: caption
+                widget: string
+                required: false
+                hint: Optioneel, staat onder de foto.
