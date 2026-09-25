@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{meta.title}}</title>
+  <meta name="description" content="{{meta.description}}">
+  <meta name="theme-color" content="#111214">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Doorgaan naar hoofdinhoud</a>
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#top">
+      <img src="{{logo.src}}" width="{{logo.width}}" height="{{logo.height}}" alt="{{logo.alt}}">
+    </a>
+    <nav class="main-nav" id="main-nav">
+    </nav>
+    <button class="nav-toggle" type="button" aria-label="Menu openen" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- PROEFLES -->
+  <section class="hero" id="proefles" aria-labelledby="proefles-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <p class="plate">{{hero.label}}</p>
+      <h1 id="proefles-title">{{hero.title}} <span class="brand-ben">B<span class="brand-ben-e">e</span>n</span></h1>
+      <p class="hero-lead">{{hero.lead}}</p>
+      <p class="hero-sub">{{hero.sub}}</p>
+      <div class="btn-row">
+        <a class="btn btn-yellow" href="mailto:{{contact.email}}">{{hero.mailButton}}</a>
+        <a class="btn btn-ghost" href="#pakketten">{{hero.packagesButton}}</a>
+      </div>
+    </div>
+    <div class="lane" aria-hidden="true"></div>
+  </section>
+
+  <section class="section section-paper proefles-detail" aria-label="{{hero.label}}">
+    <div class="container split">
+      <div class="prose">
+        {{#each proefles.paragraphs}}
+        <p>{{.}}</p>
+        {{/each}}
+      </div>
+      <div class="note-card">
+        <p class="note-strong">{{proefles.noteStrong}}</p>
+        <p>{{proefles.note}}</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="callout">
+        <div>
+          <p class="callout-title">{{proefles.calloutTitle}}</p>
+          <p class="callout-price">{{proefles.calloutPrice}}</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-dark" href="tel:{{contact.phoneLink}}">{{contact.phone}}</a>
+          <a class="btn btn-outline" href="mailto:{{contact.email}}">{{contact.email}}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="road-band" aria-label="{{roadBand.title}}">
+    <div class="road" aria-hidden="true">
+      <div class="band-car band-car-ltr"><img src="{{roadBand.car.src}}" width="{{roadBand.car.width}}" height="{{roadBand.car.height}}" alt=""></div>
+      <div class="band-car band-car-rtl"><img src="{{roadBand.car.src}}" width="{{roadBand.car.width}}" height="{{roadBand.car.height}}" alt=""></div>
+    </div>
+    <div class="container road-band-inner">
+      <div class="road-lane road-lane-top">
+        <p class="road-title">{{roadBand.title}}</p>
+      </div>
+      <div class="road-lane road-lane-bottom">
+        <a class="btn btn-dark btn-lg" href="mailto:{{contact.email}}">{{roadBand.button}}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAKKETTEN & PRIJZEN -->
+  <section class="section section-light" id="pakketten" aria-labelledby="pakketten-title">
+    <div class="container">
+      <img class="tyre-track" src="{{packages.tyreTrack.src}}" width="{{packages.tyreTrack.width}}" height="{{packages.tyreTrack.height}}" alt="" loading="lazy">
+      <h2 class="section-title" id="pakketten-title">{{packages.title}}</h2>
+
+      <div class="packages">
+        {{#each packages.items}}
+        <article class="package{{#if featured}} package-featured{{/if}}">
+          <p class="package-tag">{{tag}}</p>
+          <h3>{{title}}</h3>
+          {{#if price}}
+          <p class="package-price">{{price}}</p>
+          {{/if}}
+          <div class="package-body">
+            <p class="package-intro">{{intro}}</p>
+            {{#each paragraphs}}
+            <p>{{.}}</p>
+            {{/each}}
+          </div>
+          <p class="package-foot">{{foot}}</p>
+        </article>
+        {{/each}}
+      </div>
+
+      <div class="packages-note">
+        <p>{{packages.note}}</p>
+        <a class="btn btn-yellow" href="tel:{{contact.phoneLink}}">{{packages.callButton}}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PlanGO & THEORIE -->
+  <section class="section section-paper" id="theorie" aria-labelledby="theorie-title">
+    <div class="container split split-media">
+      <div class="prose">
+        <h2 class="section-title" id="theorie-title">{{theory.title}}</h2>
+        {{#each theory.paragraphs}}
+        <p>{{.}}</p>
+        {{/each}}
+        <p class="aside-line">{{theory.aside}}</p>
+      </div>
+      <div class="app-card">
+        <img src="{{theory.appImage.src}}" width="{{theory.appImage.width}}" height="{{theory.appImage.height}}" alt="{{theory.appImage.alt}}" loading="lazy">
+      </div>
+    </div>
+    <div class="container video-grid">
+      {{#each theory.videos}}
+      <video controls playsinline preload="none" width="{{width}}" height="{{height}}" poster="{{poster}}">
+        <source src="{{src}}" type="video/mp4">
+      </video>
+      {{/each}}
+    </div>
+  </section>
+
+  <!-- LESAUTO -->
+  <section class="section section-dark" id="lesauto" aria-labelledby="lesauto-title">
+    <div class="container">
+      <div class="lesauto-head">
+        <h2 class="section-title" id="lesauto-title">{{lesauto.title}}</h2>
+        <div class="lesauto-text">
+          {{#each lesauto.paragraphs}}
+          <p>{{.}}</p>
+          {{/each}}
+        </div>
+      </div>
+      <div class="gallery">
+        {{#each lesauto.photos}}
+        <figure{{#if @first}} class="gallery-main"{{/if}}>
+          <img src="{{src}}" width="{{width}}" height="{{height}}" alt="{{alt}}" loading="lazy">
+        </figure>
+        {{/each}}
+      </div>
+      {{#if gallery}}
+      <!-- GALERIJ (site-content.json → "gallery"); verdwijnt bij een lege lijst -->
+      <div class="photo-gallery">
+        {{#each gallery}}
+        <figure>
+          <img src="{{image.src}}" width="{{image.width}}" height="{{image.height}}" alt="{{image.alt}}" loading="lazy">
+          {{#if caption}}
+          <figcaption>{{caption}}</figcaption>
+          {{/if}}
+        </figure>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+  </section>
+
+  <!-- BENNIE -->
+  <section class="section section-light" id="bennie" aria-labelledby="bennie-title">
+    <div class="container bennie">
+      <div class="bennie-photo">
+        <img src="{{bennie.photo.src}}" width="{{bennie.photo.width}}" height="{{bennie.photo.height}}" alt="{{bennie.photo.alt}}" loading="lazy">
+      </div>
+      <div class="prose">
+        <h2 class="section-title" id="bennie-title">{{bennie.title}}</h2>
+        {{#each bennie.paragraphs}}
+        <p>{{.}}</p>
+        {{/each}}
+        <blockquote class="goal">
+          <p>{{bennie.goal}}</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section section-yellow" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <h2 class="section-title" id="contact-title">{{contact.heading}}</h2>
+      <div class="contact-grid">
+        <a class="contact-card map-card" href="{{contact.mapsUrl}}" target="_blank" rel="noopener">
+          <div class="map-art" aria-hidden="true">
+            <span class="map-road map-road-1"></span>
+            <span class="map-road map-road-2"></span>
+            <span class="map-road map-road-3"></span>
+            <span class="map-pin"></span>
+          </div>
+          <div class="map-body">
+            <h3>{{contact.addressTitle}}</h3>
+            <p>{{contact.addressLine1}}</p>
+            <p>{{contact.addressLine2}}</p>
+            <span class="map-arrow" aria-hidden="true">&rarr;</span>
+          </div>
+        </a>
+        <div class="contact-card">
+          <h3>{{contact.contactTitle}}</h3>
+          <p><a href="tel:{{contact.phoneLink}}">{{contact.phone}}</a></p>
+          <p><a href="mailto:{{contact.email}}">{{contact.email}}</a></p>
+          <ul class="social">
+            {{#if contact.facebook}}
+            <li>
+              <a href="{{contact.facebook}}" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M14 8h2V5h-2.5C11 5 10 6.6 10 8.7V10H8v3h2v7h3v-7h2.4l.6-3h-3V9c0-.6.4-1 1-1z"/></svg>
+              </a>
+            </li>
+            {{/if}}
+            {{#if contact.instagram}}
+            <li>
+              <a href="{{contact.instagram}}" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
+              </a>
+            </li>
+            {{/if}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="{{logo.src}}" width="{{logo.width}}" height="{{logo.height}}" alt="{{logo.alt}}" loading="lazy">
+      <p><a href="mailto:{{contact.email}}">{{contact.email}}</a></p>
+      <p><a href="tel:{{contact.phoneLink}}">{{contact.phone}}</a></p>
+    </div>
+    <ul class="footer-nav">
+    </ul> <!-- /footer-nav -->
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

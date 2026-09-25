@@ -1,0 +1,11 @@
+# Build-output: site/*.html wordt bij elke build (lokaal of op Vercel)
+# gegenereerd uit templates/ + site-content.json. Nooit los committen.
+site/*.html
+
+# Ruwe scrape-output (afbeeldingen/video's van de bronsite). Wordt door
+# scrape-site.js bij elke run gewist en opnieuw gevuld; wat de site
+# gebruikt staat in site/images en site/videos.
+media/
+
+node_modules/
+.vercel/

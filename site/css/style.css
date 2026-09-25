@@ -270,13 +270,13 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 3px); } /* + gele onderr
   z-index: -1;
   background:
     linear-gradient(95deg, rgba(17, 18, 20, .96) 0%, rgba(17, 18, 20, .88) 38%, rgba(17, 18, 20, .35) 75%, rgba(17, 18, 20, .15) 100%),
-    url("../images/proefles-weg.jpg") 70% center / cover no-repeat;
+    url("../images/proefles-weg.jpg") /* content: hero.backgroundPhoto */ 70% center / cover no-repeat;
 }
 @media (max-width: 767px) {
   .hero-bg {
     background:
       linear-gradient(180deg, rgba(17, 18, 20, .80) 0%, rgba(17, 18, 20, .92) 70%),
-      url("../images/proefles-weg.jpg") 65% center / cover no-repeat;
+      url("../images/proefles-weg.jpg") /* content: hero.backgroundPhoto */ 65% center / cover no-repeat;
   }
 }
 
@@ -763,6 +763,41 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 3px); } /* + gele onderr
      hoogtes nagenoeg gelijk uitkomen, zonder iets bij te snijden. */
   .gallery { grid-template-columns: 183fr 100fr; align-items: start; }
   .gallery-main { grid-row: span 2; }
+}
+
+/* Galerij (site-content.json → "gallery"): 0 t/m n foto's.
+   Contentfoto's: volledige beeldverhouding, nooit bijsnijden (CLAUDE.md).
+   Flex i.p.v. grid zodat een onvolledige laatste rij (1, 2, 4, ...) netjes
+   gecentreerd staat; foto's met verschillende verhoudingen lijnen boven uit. */
+.photo-gallery {
+  --cols: 1;
+  --gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--gap);
+  margin-top: var(--gap);
+}
+@media (min-width: 560px) { .photo-gallery { --cols: 2; } }
+@media (min-width: 900px) { .photo-gallery { --cols: 3; } }
+.photo-gallery figure {
+  margin: 0;
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+}
+/* Eén foto: niet op kolombreedte, maar ook niet schermvullend. */
+.photo-gallery figure:only-child { flex-basis: min(100%, 760px); }
+.photo-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  background: var(--asphalt-2);
+}
+.photo-gallery figcaption {
+  margin-top: 8px;
+  font-size: .9rem;
+  color: rgba(255, 255, 255, .72);
 }
 
 /* ---------- Bennie ---------- */

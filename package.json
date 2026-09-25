@@ -1,0 +1,15 @@
+{
+  "name": "rijschool-ben",
+  "private": true,
+  "type": "module",
+  "description": "Site Rijschool Ben: site/*.html wordt gebouwd uit templates/ + site-content.json (build-site.js).",
+  "scripts": {
+    "build": "node build-site.js ."
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "image-size": "1.2.1"
+  }
+}
