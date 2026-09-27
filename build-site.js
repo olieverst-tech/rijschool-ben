@@ -14,6 +14,12 @@
 //                                 plus {{@index}}, {{@first}}, {{@last}}.
 //   {{#if veld}}...{{else}}...{{/if}}  ontbrekend veld, lege string/lijst,
 //                                 false en null zijn onwaar.
+//   {{@field veld}}               het volledige pad van dat veld in
+//                                 site-content.json, ook binnen {{#each}}
+//                                 (bv. "packages.items.0.title"; {{@field .}}
+//                                 is het huidige item). Voor het label
+//                                 data-field="{{@field …}}", zie CLAUDE.md,
+//                                 "Bewerklaag (fase 1: data-field labels)".
 // Een blok-tag die alleen op een regel staat, neemt die hele regel mee weg.
 // Onbekende velden zijn een fout: een typfout in template of JSON breekt de
 // build in plaats van stilzwijgend een lege plek op te leveren.
@@ -133,25 +139,33 @@ function parse(src) {
   return root.children;
 }
 
-function lookup(expr, scopes) {
-  if (expr === '.') return scopes[0].value;
-  if (expr.startsWith('@')) {
-    const s = scopes.find((sc) => sc.meta);
-    if (!s || !(expr.slice(1) in s.meta)) throw new Error(`{{${expr}}} buiten {{#each}}`);
-    return s.meta[expr.slice(1)];
-  }
+// Elke scope kent naast zijn waarde ook zijn pad in site-content.json
+// ('' = de root), zodat {{@field}} binnen {{#each}} het volledige pad geeft.
+const joinPath = (base, rel) => (base === '' ? String(rel) : `${base}.${rel}`);
+
+function resolve(expr, scopes) {
+  if (expr === '.') return { value: scopes[0].value, path: scopes[0].path };
   const parts = expr.split('.');
-  for (const { value } of scopes) {
+  for (const { value, path: base } of scopes) {
     if (value && typeof value === 'object' && parts[0] in value) {
       let v = value;
       for (const p of parts) {
         if (v == null || typeof v !== 'object' || !(p in v)) throw new Error(`Veld niet gevonden: ${expr}`);
         v = v[p];
       }
-      return v;
+      return { value: v, path: joinPath(base, expr) };
     }
   }
   throw new Error(`Veld niet gevonden: ${expr}`);
+}
+
+function lookup(expr, scopes) {
+  if (expr.startsWith('@')) {
+    const s = scopes.find((sc) => sc.meta);
+    if (!s || !(expr.slice(1) in s.meta)) throw new Error(`{{${expr}}} buiten {{#each}}`);
+    return s.meta[expr.slice(1)];
+  }
+  return resolve(expr, scopes).value;
 }
 
 const truthy = (v) => (Array.isArray(v) ? v.length > 0 : Boolean(v));
@@ -160,7 +174,11 @@ function render(nodes, scopes) {
   let out = '';
   for (const n of nodes) {
     if (n.type === 'text') out += n.text;
-    else if (n.type === 'var') {
+    else if (n.type === 'var' && n.expr.startsWith('@field ')) {
+      // Alleen het pad, maar het veld moet wel bestaan: een typfout in een
+      // label breekt de build net als elke andere typfout.
+      out += escapeAttr(resolve(n.expr.slice(7).trim(), scopes).path);
+    } else if (n.type === 'var') {
       const v = lookup(n.expr, scopes);
       if (v == null || typeof v === 'object') throw new Error(`{{${n.expr}}} is geen tekst of getal`);
       const s = String(v);
@@ -172,11 +190,11 @@ function render(nodes, scopes) {
       try { v = lookup(n.expr, scopes); } catch { v = undefined; }
       out += render(truthy(v) ? n.children : n.elseChildren || [], scopes);
     } else if (n.type === 'each') {
-      const list = lookup(n.expr, scopes);
+      const { value: list, path: listPath } = resolve(n.expr, scopes);
       if (!Array.isArray(list)) throw new Error(`{{#each ${n.expr}}}: geen lijst`);
       list.forEach((item, index) => {
         const meta = { index, first: index === 0, last: index === list.length - 1 };
-        out += render(n.children, [{ value: item, meta }, ...scopes]);
+        out += render(n.children, [{ value: item, path: joinPath(listPath, index), meta }, ...scopes]);
       });
     }
   }
@@ -198,7 +216,7 @@ const CSS_DIR = path.join(SITE_DIR, 'css');
 function renderCss(css, content) {
   let count = 0;
   const out = css.replace(CSS_FIELD, (m, q, marker, expr) => {
-    const v = lookup(expr, [{ value: content }]);
+    const v = lookup(expr, [{ value: content, path: '' }]);
     const src = typeof v === 'string' ? v : v?.src;
     if (typeof src !== 'string' || !src) throw new Error(`${expr}: geen afbeelding (verwacht { "src": "images/…" })`);
     if (/["'()\s]|\\/.test(src)) throw new Error(`${expr}: ongeldig pad voor CSS: ${src}`);
@@ -224,7 +242,7 @@ try {
   for (const file of templates) {
     const src = fs.readFileSync(path.join(TEMPLATE_DIR, file), 'utf8');
     try {
-      outputs.push({ file: path.join(SITE_DIR, file), label: `site/${file}`, text: render(parse(src), [{ value: content }]) });
+      outputs.push({ file: path.join(SITE_DIR, file), label: `site/${file}`, text: render(parse(src), [{ value: content, path: '' }]) });
     } catch (err) {
       throw new Error(`templates/${file}: ${err.message}`);
     }
